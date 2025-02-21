@@ -1,50 +1,54 @@
-# React + TypeScript + Vite
+#📰 Newscripta
+Newscripta is a modern and intuitive news aggregator web application that allows users to explore, search, filter, and personalize their news feed. It fetches the latest articles from multiple sources and provides a seamless reading experience.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<!-- Add a screenshot link here -->
 
-Currently, two official plugins are available:
+##✨ Features
+✅ Personalized News Feed – Users can customize their homepage by selecting preferred news sources, categories, and authors.
+✅ Search & Filtering – Search for news articles by keywords and filter results by date, category, and source.
+✅ Multiple News Sources – Aggregates news from NewsAPI, The Guardian API, and The New York Times API.
+✅ Responsive UI – Fully optimized for desktop and mobile devices.
+✅ Dark Mode Support – Enjoy reading in both light and dark themes.
+✅ Performance Optimized – Fast loading times with efficient API requests and caching.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##🚀 Tech Stack
+Frontend: React (Vite), TypeScript, Context API
+Styling: TailwindCSS
+State Management: Context API
+APIs: NewsAPI, The Guardian API, The New York Times API
 
-## Expanding the ESLint configuration
+	
+##🛠️ Installation & Setup
+To run Newscripta locally, follow these steps:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1️⃣ Clone the repository
 ```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+git clone https://github.com/your-username/newscripta.git
+cd newscripta
 ```
+2️⃣ Install dependencies
+```
+npm install
+```
+3️⃣ Set up environment variables
+
+Create a .env.local file in the root directory and add your API keys:
+```
+VITE_NEWSAPI_KEY=your_newsapi_key
+VITE_GUARDIAN_KEY=your_guardian_api_key
+VITE_NYTIMES_KEY=your_nytimes_api_key
+```
+4️⃣ Start the development server
+```
+npm run dev
+```
+###The app will be available at http://localhost:5173/.
+
+##📌 Future Improvements
+✅ Implement user authentication for a more personalized experience.
+✅ Add support for saving and bookmarking favorite articles.
+✅ Improve accessibility and enhance UI animations.
+
+##💬 Feedback & Contributions
+Contributions are welcome! If you find a bug or have suggestions, feel free to open an issue or submit a pull request.
+ 
