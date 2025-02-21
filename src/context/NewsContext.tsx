@@ -21,6 +21,12 @@ interface NewsContextType {
   setSelectedCategories: (categories: string[]) => void;
   selectedAuthors: string[];
   setSelectedAuthors: (authors: string[]) => void;
+  savedSources: string[];
+  setSavedSources: (sources: string[]) => void;
+  savedCategories: string[];
+  setSavedCategories: (categories: string[]) => void;
+  savedAuthors: string[];
+  setSavedAuthors: (authors: string[]) => void;
   filteredNews: any[];
   applyFilters: () => void;
   loading: boolean;
@@ -31,6 +37,11 @@ interface NewsContextType {
   foodNews: any[];
   query: string;
   setQuery: any;
+  handlePreferenceUpdate: (
+    selectedCategories: string[],
+    selectedSources: string[],
+    selectedAuthors: string[]
+  ) => void;
 }
 
 const NewsContext = createContext<NewsContextType | undefined>(undefined);
@@ -41,42 +52,52 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
+  const [savedSources, setSavedSources] = useState<string[]>(
+    JSON.parse(localStorage.getItem("savedSources") || "[]")
+  );
+  const [savedCategories, setSavedCategories] = useState<string[]>(
+    JSON.parse(localStorage.getItem("savedCategories") || "[]")
+  );
+  const [savedAuthors, setSavedAuthors] = useState<string[]>(
+    JSON.parse(localStorage.getItem("savedAuthors") || "[]")
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [editorsPick, setEditorsPick] = useState<any[]>([]);
   const [sportsNews, setSportsNews] = useState<any[]>([]);
   const [businessNews, setBusinessNews] = useState<any[]>([]);
   const [foodNews, setFoodNews] = useState<any[]>([]);
- const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
+
   const fetchDefaultNews = async () => {
     try {
       setLoading(true);
 
-      const [newsAPI, guardian, nyt, fashion, sports, business, food] =
-        await Promise.all([
-          fetchNewsFromNewsAPI("top headlines"),
-          fetchNewsFromGuardian("top headlines"),
-          fetchNewsFromNYT("top headlines"),
-          fetchNewsFromGuardian("fashion"), // Editor's Pick
-          fetchNewsFromGuardian("sports"),
-          fetchNewsFromGuardian("business"),
-          fetchNewsFromGuardian("food"),
-        ]);
+      // Check if user has selected categories, otherwise use defaults
+      const categoriesToFetch =
+        savedCategories.length > 0
+          ? savedCategories
+          : ["top headlines", "fashion", "sports", "business", "food"];
+
+      const fetchPromises = [
+        fetchNewsFromNewsAPI("top headlines"),
+        fetchNewsFromGuardian("top headlines"),
+        fetchNewsFromNYT("top headlines"),
+        ...categoriesToFetch.map((category) => fetchNewsFromGuardian(category)),
+      ];
+
+      const results = await Promise.all(fetchPromises);
 
       const limitedNews = [
-        ...newsAPI.slice(0, 1),
-        ...guardian.slice(0, 3),
-        ...nyt.slice(0, 3),
+        ...results[0].slice(0, 1), // NewsAPI
+        ...results[1].slice(0, 3), // Guardian
+        ...results[2].slice(0, 3), // NYT
       ];
 
       setNews(limitedNews);
-      //   setEditorsPick(fashion.slice(0, 5));
-      //   setSportsNews(sports.slice(0, 5));
-      //   setBusinessNews(business.slice(0, 5));
-      //   setFoodNews(food.slice(0, 5));
-      setEditorsPick(Array.isArray(fashion) ? fashion.slice(0, 5) : []);
-      setSportsNews(Array.isArray(sports) ? sports.slice(0, 5) : []);
-      setBusinessNews(Array.isArray(business) ? business.slice(0, 5) : []);
-      setFoodNews(Array.isArray(food) ? food.slice(0, 5) : []);
+      setEditorsPick(results[3]?.slice(0, 5) || []);
+      setSportsNews(results[4]?.slice(0, 5) || []);
+      setBusinessNews(results[5]?.slice(0, 5) || []);
+      setFoodNews(results[6]?.slice(0, 5) || []);
     } catch (error) {
       console.error("Error fetching default news:", error);
     } finally {
@@ -131,17 +152,21 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter((article) => {
-        const categoryName =
-          article.pillarName?.toLowerCase() ||
-          article.section_name?.toLowerCase() ||
-          "general";
-        return selectedCategories.some(
-          (selected) => selected.toLowerCase() === categoryName
-        );
-      });
-    }
+   if (selectedCategories.length > 0) {
+     filtered = filtered.filter((article) => {
+       const categoryName = (
+         article.pillarName ||
+         article.section_name ||
+         article.category ||
+         "general"
+       ).toLowerCase();
+
+       return selectedCategories.some(
+         (selected) => selected.toLowerCase() === categoryName
+       );
+     });
+   }
+
 
     if (selectedAuthors.length > 0) {
       filtered = filtered.filter((article) => {
@@ -165,23 +190,36 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
     setSelectedAuthors([]);
     setFilteredNews(news); // Reset filtered news to the full news list
   };
-  
+
+const handlePreferenceUpdate = (
+  selectedCategories: string[],
+  selectedSources: string[],
+  selectedAuthors: string[]
+) => {
+  setSavedCategories(selectedCategories);
+  setSavedSources(selectedSources);
+  setSavedAuthors(selectedAuthors);
+
+  localStorage.setItem("savedCategories", JSON.stringify(selectedCategories));
+  localStorage.setItem("savedSources", JSON.stringify(selectedSources));
+  localStorage.setItem("savedAuthors", JSON.stringify(selectedAuthors));
+
+  fetchDefaultNews(); // ✅ Re-fetch news when any preference updates
+};
+
 
   useEffect(() => {
     fetchDefaultNews();
   }, []);
-  useEffect(() => {
-    console.log(news);
-    console.log("Editors Pick: useEffect", editorsPick);
-    console.log("Sports News: useEffect", sportsNews);
-    console.log("Business News: useEffect", businessNews);
-    console.log("Food News: useEffect", foodNews);
-  }, [editorsPick, sportsNews, businessNews, foodNews, news]); // ✅ Log only when these states update
 
   useEffect(() => {
     applyFilters();
   }, [selectedSources, selectedCategories, selectedAuthors, news]);
 
+  // useEffect(() => {
+  //   fetchDefaultNews();
+  // }, [savedCategories, savedSources]); // Re-fetch news when preferences change
+  
   return (
     <NewsContext.Provider
       value={{
@@ -194,6 +232,12 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
         setSelectedCategories,
         selectedAuthors,
         setSelectedAuthors,
+        savedSources,
+        setSavedSources,
+        savedCategories,
+        setSavedCategories,
+        savedAuthors,
+        setSavedAuthors,
         filteredNews,
         applyFilters,
         loading,
@@ -204,6 +248,7 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
         foodNews,
         query,
         setQuery,
+        handlePreferenceUpdate,
       }}
     >
       {children}

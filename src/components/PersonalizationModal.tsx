@@ -1,105 +1,132 @@
-// import { useState } from "react";
-// import { useNews } from "../context/NewsContext";
 
-// interface PersonalizationModalProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-// }
+import { useState} from "react";
+import { useNews } from "../context/NewsContext";
 
-// const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
-//   isOpen,
-//   onClose,
-// }) => {
-//   const {
-//     preferredCategories,
-//     setPreferredCategories,
-//     preferredSources,
-//     setPreferredSources,
-//     preferredAuthors,
-//     setPreferredAuthors,
-//     fetchDefaultNews,
-//   } = useNews();
+const PersonalizationModal = ({ isOpen, onClose }:any) => {
+  const {
+    savedSources,
+    savedCategories,
+    savedAuthors,
+    news,
+    handlePreferenceUpdate,
+  } = useNews();
 
-//   const categories = ["Top Headlines", "Fashion", "Sports", "Business", "Food"];
-//   const sources = ["BBC", "CNN", "The Guardian", "New York Times"]; // Sample sources
-//   const authors = ["John Doe", "Jane Smith", "Michael Brown"]; // Sample authors
+  const [tempCategories, setTempCategories] = useState(savedCategories);
+  const [tempSources, setTempSources] = useState(savedSources);
+  const [tempAuthors, setTempAuthors] = useState(savedAuthors);
 
-//   const [tempCategories, setTempCategories] = useState(preferredCategories);
-//   const [tempSources, setTempSources] = useState(preferredSources);
-//   const [tempAuthors, setTempAuthors] = useState(preferredAuthors);
+  const categories = ["top headlines", "fashion", "sports", "business", "food"];
 
-//   const handleSave = () => {
-//     setPreferredCategories(tempCategories);
-//     setPreferredSources(tempSources);
-//     setPreferredAuthors(tempAuthors);
-//     fetchDefaultNews(); // Fetch personalized news
-//     onClose();
-//   };
+  const sources = [
+    ...new Set(
+      news.map(
+        (article) =>
+          article.source?.name ||
+          article.publication ||
+          article?.fields?.publication ||
+          "Unknown"
+      )
+    ),
+  ];
+  const authors = [
+    ...new Set(
+      news.map(
+        (article) =>
+          article?.author ||
+          article?.fields?.byline ||
+          article?.byline?.original ||
+          "Unknown Author"
+      )
+    ),
+  ];
 
-//   return isOpen ? (
-//     <div className="modal">
-//       <div className="modal-content">
-//         <h2>Personalize Your News Feed</h2>
+const handleSave = () => {
+  handlePreferenceUpdate(tempCategories, tempSources, tempAuthors); // ✅ Pass all preferences
 
-//         <h3>Categories</h3>
-//         {categories.map((category) => (
-//           <label key={category}>
-//             <input
-//               type="checkbox"
-//               checked={tempCategories.includes(category)}
-//               onChange={() =>
-//                 setTempCategories((prev) =>
-//                   prev.includes(category)
-//                     ? prev.filter((c) => c !== category)
-//                     : [...prev, category]
-//                 )
-//               }
-//             />
-//             {category}
-//           </label>
-//         ))}
+  onClose();
+};
 
-//         <h3>Sources</h3>
-//         {sources.map((source) => (
-//           <label key={source}>
-//             <input
-//               type="checkbox"
-//               checked={tempSources.includes(source)}
-//               onChange={() =>
-//                 setTempSources((prev) =>
-//                   prev.includes(source)
-//                     ? prev.filter((s) => s !== source)
-//                     : [...prev, source]
-//                 )
-//               }
-//             />
-//             {source}
-//           </label>
-//         ))}
 
-//         <h3>Authors</h3>
-//         {authors.map((author) => (
-//           <label key={author}>
-//             <input
-//               type="checkbox"
-//               checked={tempAuthors.includes(author)}
-//               onChange={() =>
-//                 setTempAuthors((prev) =>
-//                   prev.includes(author)
-//                     ? prev.filter((a) => a !== author)
-//                     : [...prev, author]
-//                 )
-//               }
-//             />
-//             {author}
-//           </label>
-//         ))}
+  return (
+    isOpen && (
+      <div className="fixed inset-0 bg-black opacity-90 flex justify-center items-center z-50">
+        <div className="bg-white p-5 rounded-lg w-96">
+          <h2 className="text-xl font-bold">Personalize Your News</h2>
+          <div className="mt-4">
+            <h3 className="font-semibold">Categories</h3>
+            {categories.map((category) => (
+              <label key={category} className="block">
+                <input
+                  type="checkbox"
+                  checked={tempCategories.includes(category)}
+                  onChange={(e) =>
+                    setTempCategories(
+                      e.target.checked
+                        ? [...tempCategories, category]
+                        : tempCategories.filter((c) => c !== category)
+                    )
+                  }
+                />
+                {category}
+              </label>
+            ))}
+          </div>
 
-//         <button onClick={handleSave}>Save Preferences</button>
-//         <button onClick={onClose}>Cancel</button>
-//       </div>
-//     </div>
-//   ) : null;
-// };
+          <div className="mt-4">
+            <h3 className="font-semibold">Sources</h3>
+            {sources.map((source) => (
+              <label key={source} className="block">
+                <input
+                  type="checkbox"
+                  checked={tempSources.includes(source)}
+                  onChange={(e) =>
+                    setTempSources(
+                      e.target.checked
+                        ? [...tempSources, source]
+                        : tempSources.filter((s) => s !== source)
+                    )
+                  }
+                />
+                {source}
+              </label>
+            ))}
+          </div>
 
-// export default PersonalizationModal;
+          <div className="mt-4">
+            <h3 className="font-semibold">Authors</h3>
+            {authors.map((author) => (
+              <label key={author} className="block">
+                <input
+                  type="checkbox"
+                  checked={tempAuthors.includes(author)}
+                  onChange={(e) =>
+                    setTempAuthors(
+                      e.target.checked
+                        ? [...tempAuthors, author]
+                        : tempAuthors.filter((a) => a !== author)
+                    )
+                  }
+                />
+                {author}
+              </label>
+            ))}
+          </div>
+
+          <div className="flex justify-between mt-5">
+            <button className="bg-gray-400 px-4 py-2 rounded" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  );
+};
+
+export default PersonalizationModal;
