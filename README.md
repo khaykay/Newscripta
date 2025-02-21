@@ -2,7 +2,8 @@
 
 > Newscripta is a modern and intuitive news aggregator web application that allows users to explore, search, filter, and personalize their news feed. It fetches the latest articles from multiple sources and provides a seamless reading experience.
 
-
+## Live Demo Link
+https://newzcripta.netlify.app/
 
 ## ✨ Features
 
