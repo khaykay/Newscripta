@@ -1,34 +1,33 @@
-import { FC } from "react";
+
 import NewsCard from "./NewsCard";
+import { formatArticle } from "../utils/helper";
+import { FaLongArrowAltRight } from "react-icons/fa";
 
-interface Article {
-  title: string;
-  description?: string;
-  url: string;
-  imageUrl?: string;
-  source?: string;
-  author?: string;
-  publishedAt: string;
-  tag?: string;
-}
-
-interface CategorySectionProps {
-  title: string;
-  articles: Article[];
-}
-
-const CategorySection: FC<CategorySectionProps> = ({ title, articles }) => {
+const CategorySection = ({ title, articles }: any) => {
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {articles?.length > 0 ? (
-          articles?.map((article, index) => (
-            <NewsCard key={index} {...article} />
-          ))
-        ) : (
-          <p className="text-gray-500">No articles found.</p>
-        )}
+      <div className="flex justify-between  mb-3">
+        <h2 className="text-xl font-bold  ">{title}</h2>
+        <span className="text-red-600 flex items-center">
+          See All <FaLongArrowAltRight className="ml-1.5" />
+        </span>
+      </div>
+
+      <div className="overflow-x-auto scroll-snap-x scrollbar-hide ">
+        <div className="flex space-x-4 scroll-snap-start ">
+          {articles?.length > 0 ? (
+            articles.map((article: any, index: number) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-[350px] md:w-[300px]  "
+              >
+                <NewsCard {...formatArticle(article)} />
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No articles found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

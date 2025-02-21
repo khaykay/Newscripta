@@ -29,6 +29,8 @@ interface NewsContextType {
   sportsNews: any[];
   businessNews: any[];
   foodNews: any[];
+  query: string;
+  setQuery: any;
 }
 
 const NewsContext = createContext<NewsContextType | undefined>(undefined);
@@ -44,7 +46,7 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
   const [sportsNews, setSportsNews] = useState<any[]>([]);
   const [businessNews, setBusinessNews] = useState<any[]>([]);
   const [foodNews, setFoodNews] = useState<any[]>([]);
-
+ const [query, setQuery] = useState<string>("");
   const fetchDefaultNews = async () => {
     try {
       setLoading(true);
@@ -54,16 +56,16 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
           fetchNewsFromNewsAPI("top headlines"),
           fetchNewsFromGuardian("top headlines"),
           fetchNewsFromNYT("top headlines"),
-          fetchNewsFromNewsAPI("fashion"), // Editor's Pick
-          fetchNewsFromNewsAPI("sports"),
-          fetchNewsFromNewsAPI("business"),
-          fetchNewsFromNewsAPI("food"),
+          fetchNewsFromGuardian("fashion"), // Editor's Pick
+          fetchNewsFromGuardian("sports"),
+          fetchNewsFromGuardian("business"),
+          fetchNewsFromGuardian("food"),
         ]);
 
       const limitedNews = [
-        ...newsAPI.slice(0, 2),
-        ...guardian.slice(0, 2),
-        ...nyt.slice(0, 2),
+        ...newsAPI.slice(0, 1),
+        ...guardian.slice(0, 3),
+        ...nyt.slice(0, 3),
       ];
 
       setNews(limitedNews);
@@ -163,16 +165,18 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
     setSelectedAuthors([]);
     setFilteredNews(news); // Reset filtered news to the full news list
   };
+  
 
   useEffect(() => {
     fetchDefaultNews();
   }, []);
-  //   useEffect(() => {
-  //     console.log("Editors Pick: useEffect", editorsPick);
-  //     console.log("Sports News: useEffect", sportsNews);
-  //     console.log("Business News: useEffect", businessNews);
-  //     console.log("Food News: useEffect", foodNews);
-  //   }, [editorsPick, sportsNews, businessNews, foodNews]); // ✅ Log only when these states update
+  useEffect(() => {
+    console.log(news);
+    console.log("Editors Pick: useEffect", editorsPick);
+    console.log("Sports News: useEffect", sportsNews);
+    console.log("Business News: useEffect", businessNews);
+    console.log("Food News: useEffect", foodNews);
+  }, [editorsPick, sportsNews, businessNews, foodNews, news]); // ✅ Log only when these states update
 
   useEffect(() => {
     applyFilters();
@@ -198,6 +202,8 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
         sportsNews,
         businessNews,
         foodNews,
+        query,
+        setQuery,
       }}
     >
       {children}

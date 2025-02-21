@@ -8,20 +8,16 @@ const Home = () => {
     sportsNews,
     businessNews,
     foodNews,
-    editorsPick,
     filteredNews,
     loading,
+    editorsPick
   } = useNews();
 
   return (
     <div>
       <NewsList filteredNews={filteredNews} loading={loading} />
-      {editorsPick?.length > 0 && <EditorsPick />}
-
-      <CategorySection title="Sports" articles={sportsNews} />
-      <CategorySection title="Business" articles={businessNews} />
-      <CategorySection title="Food" articles={foodNews} />
-      {/* {sportsNews?.length > 0 && (
+      {editorsPick?.length > 0 &&<EditorsPick />}
+      {sportsNews?.length > 0 && (
         <CategorySection title="Sports" articles={sportsNews} />
       )}
       {businessNews?.length > 0 && (
@@ -29,7 +25,7 @@ const Home = () => {
       )}
       {foodNews?.length > 0 && (
         <CategorySection title="Food" articles={foodNews} />
-      )} */}
+      )}
     </div>
   );
 };

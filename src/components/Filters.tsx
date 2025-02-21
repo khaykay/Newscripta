@@ -1,5 +1,6 @@
 import { useNews } from "../context/NewsContext";
 import { useState } from "react";
+
 const Filters = () => {
   const {
     selectedSources,
@@ -17,6 +18,7 @@ const Filters = () => {
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
   const [author, setAuthor] = useState("");
+
   // Extract unique sources, categories, and authors from API data
   const uniqueSources = Array.from(
     new Set(
@@ -68,64 +70,68 @@ const Filters = () => {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 sm:gap-4 mt-4">
-      <select
-        value={source}
-        onChange={handleFilterChange(setSelectedSources, setSource)}
-        className="w-full sm:w-auto p-2 border rounded-md"
-      >
-        <option value="">All Sources</option>
-        {uniqueSources.map((source, index) => (
-          <option key={index} value={source}>
-            {source}
-          </option>
-        ))}
-      </select>
+    <div className="">
+      
+        <div className="flex flex-wrap gap-2 sm:gap-4  justify-center">
+          <select
+            value={source}
+            onChange={handleFilterChange(setSelectedSources, setSource)}
+            className="w-full sm:w-auto p-2 border rounded-md"
+          >
+            <option value="">All Sources</option>
+            {uniqueSources.map((source, index) => (
+              <option key={index} value={source}>
+                {source}
+              </option>
+            ))}
+          </select>
 
-      <select
-        value={category}
-        onChange={handleFilterChange(setSelectedCategories, setCategory)}
-        className="w-full sm:w-auto p-2 border rounded-md"
-      >
-        <option value="">All Categories</option>
-        {uniqueCategories.map((category, index) => (
-          <option key={index} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
+          <select
+            value={category}
+            onChange={handleFilterChange(setSelectedCategories, setCategory)}
+            className="w-full sm:w-auto p-2 border rounded-md"
+          >
+            <option value="">All Categories</option>
+            {uniqueCategories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
 
-      <select
-        value={author}
-        onChange={handleFilterChange(setSelectedAuthors, setAuthor)}
-        className="w-full sm:w-auto p-2 border rounded-md"
-      >
-        <option value="">All Authors</option>
-        {uniqueAuthors.map((author, index) => (
-          <option key={index} value={author}>
-            {author}
-          </option>
-        ))}
-      </select>
+          <select
+            value={author}
+            onChange={handleFilterChange(setSelectedAuthors, setAuthor)}
+            className="w-full sm:w-auto p-2 border rounded-md"
+          >
+            <option value="">All Authors</option>
+            {uniqueAuthors.map((author, index) => (
+              <option key={index} value={author}>
+                {author}
+              </option>
+            ))}
+          </select>
 
-      {/* Reset Filters Button */}
-      <button
-        onClick={handleReset}
-        className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-      >
-        Reset Filters
-      </button>
-      <button
-        onClick={() => {
-          setSelectedSources([]);
-          setSelectedCategories([]);
-          setSelectedAuthors([]);
-          fetchDefaultNews();
-        }}
-        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-      >
-        Home
-      </button>
+          {/* Reset Filters Button */}
+          <button
+            onClick={handleReset}
+            className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+          >
+            Reset Filters
+          </button>
+          {/* <button
+            onClick={() => {
+              setSelectedSources([]);
+              setSelectedCategories([]);
+              setSelectedAuthors([]);
+              fetchDefaultNews();
+            }}
+            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+          >
+            Home
+          </button> */}
+        </div>
+     
     </div>
   );
 };

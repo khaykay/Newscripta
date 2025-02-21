@@ -2,15 +2,29 @@ import SearchBar from "./components/SearchBar";
 import Filters from "./components/Filters";
 import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
+import { RiColorFilterFill } from "react-icons/ri";
+import { useState } from "react";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
+   const [isOpen, setIsOpen] = useState(false)
   return (
-    <div className=" p-4 t">
+    <div className=" py-4 px-8 md:px-14">
       <NavBar />
-      <div className="bg-[#ddd] shadow-md rounded-lg p-4">
+      <div
+        className={`  rounded-lg py-4 px-2 flex  justify-center gap-3 md:gap-5 items-center 
+        `}
+      >
         <SearchBar />
-        <Filters />
+        <RiColorFilterFill
+          size={28}
+          className=""
+          onClick={() => setIsOpen(!isOpen)}
+        />
       </div>
+        {isOpen && (
+        <Filters/>)}
       <Home />
+      <ScrollToTop/>
     </div>
   );
 }
