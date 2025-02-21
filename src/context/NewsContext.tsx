@@ -94,10 +94,10 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
       ];
 
       setNews(limitedNews);
-      setEditorsPick(results[3]?.slice(0, 5) || []);
-      setSportsNews(results[4]?.slice(0, 5) || []);
-      setBusinessNews(results[5]?.slice(0, 5) || []);
-      setFoodNews(results[6]?.slice(0, 5) || []);
+      setEditorsPick(results[4]?.slice(0, 5) || []);
+      setSportsNews(results[5]?.slice(0, 5) || []);
+      setBusinessNews(results[6]?.slice(0, 5) || []);
+      setFoodNews(results[7]?.slice(0, 5) || []);
     } catch (error) {
       console.error("Error fetching default news:", error);
     } finally {
